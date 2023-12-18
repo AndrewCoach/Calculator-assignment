@@ -19,13 +19,17 @@
 </div>
 
 <div id="result"></div>
+</br>
+
+<h3>History</h3>
 
 <div id="history">
-    <h3>Calculation History</h3>
-    @foreach (var item in Model)
-    {
-        <p>@item.Calculation</p>
-    }
+    <div id="historyItems">
+        @foreach (var item in Model)
+        {
+            <p>@item.Calculation</p>
+        }
+    </div>
 </div>
 
 @section Scripts {
@@ -45,6 +49,12 @@
                 success: function (response) {
                     if (response.success) {
                         $('#result').html('Result: ' + response.result);
+                        $('#historyItems').prepend('<p>' + response.calculation + '</p>');
+
+                        // Remove elements to keep only the latest 10
+                        while ($('#historyItems p').length > 10) {
+                            $('#historyItems p:last').remove();
+                        }
                     } else {
                         $('#result').html('Error: ' + response.message);
                     }

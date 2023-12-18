@@ -30,15 +30,16 @@ public class CalculatorController : Controller
         try
         {
             var result = model.Calculate();
+            var formattedCalculation = $"{model.Operand1} {OperationToSymbol(model.Operation)} {model.Operand2} = {result}";
             var history = new CalculationHistory
             {
-                Calculation = $"{model.Operand1} {OperationToSymbol(model.Operation)} {model.Operand2} = {result}",
+                Calculation = formattedCalculation,
                 Timestamp = DateTime.Now
             };
             _context.CalculationHistory.Add(history);
             _context.SaveChanges();
 
-            return Json(new { success = true, result = result });
+            return Json(new { success = true, result = result, calculation = formattedCalculation });
         }
         catch (Exception ex)
         {
