@@ -1,67 +1,63 @@
+using Calculator.Models;
+using Calculator.Services;
+
 namespace CalculatorTests;
 
-using Calculator.Models;
-using Microsoft.VisualStudio.TestTools.UnitTesting;
-
 [TestClass]
-public class CalculatorModelTests
+public class CalculatorServiceTests
 {
-    private CalculatorModel calculator;
+    private CalculatorService calculatorService;
 
     [TestInitialize]
     public void Initialize()
     {
-        calculator = new CalculatorModel();
+        calculatorService = new CalculatorService();
     }
 
-    private void SetupCalculation(decimal operand1, decimal operand2, OperationType operation)
+    private decimal PerformCalculation(decimal operand1, decimal operand2, OperationType operation, bool roundResult = false)
     {
-        calculator.Operand1 = operand1;
-        calculator.Operand2 = operand2;
-        calculator.Operation = operation;
+        return calculatorService.PerformCalculation(operand1, operand2, operation, roundResult);
     }
 
     [TestMethod]
     public void AdditionTest()
     {
-        SetupCalculation(5, 3, OperationType.Add);
-        Assert.AreEqual(8, calculator.Calculate());
+        var result = PerformCalculation(5, 3, OperationType.Add);
+        Assert.AreEqual(8, result);
     }
 
     [TestMethod]
     public void SubtractionTest()
     {
-        SetupCalculation(5, 3, OperationType.Subtract);
-        Assert.AreEqual(2, calculator.Calculate());
+        var result = PerformCalculation(5, 3, OperationType.Subtract);
+        Assert.AreEqual(2, result);
     }
 
     [TestMethod]
     public void MultiplicationTest()
     {
-        SetupCalculation(5, 3, OperationType.Multiply);
-        Assert.AreEqual(15, calculator.Calculate());
+        var result = PerformCalculation(5, 3, OperationType.Multiply);
+        Assert.AreEqual(15, result);
     }
 
     [TestMethod]
     public void DivisionTest()
     {
-        SetupCalculation(6, 3, OperationType.Divide);
-        Assert.AreEqual(2, calculator.Calculate());
+        var result = PerformCalculation(6, 3, OperationType.Divide);
+        Assert.AreEqual(2, result);
     }
 
     [TestMethod]
     [ExpectedException(typeof(DivideByZeroException))]
     public void DivisionByZeroTest()
     {
-        SetupCalculation(5, 0, OperationType.Divide);
-        calculator.Calculate();
+        PerformCalculation(5, 0, OperationType.Divide);
     }
 
     [TestMethod]
     public void WholeNumberTest()
     {
-        calculator.RoundResult = true;
-        SetupCalculation(7, 3, OperationType.Divide);
-        Assert.AreEqual(2, calculator.Calculate());
+        var result = PerformCalculation(7, 3, OperationType.Divide, true);
+        Assert.AreEqual(2, result);
     }
 }

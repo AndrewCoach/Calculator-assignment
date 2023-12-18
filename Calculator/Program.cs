@@ -1,3 +1,4 @@
+using Calculator.Binders;
 using Calculator.Data;
 using Calculator.Services;
 using Microsoft.EntityFrameworkCore;
@@ -14,7 +15,11 @@ Log.Logger = new LoggerConfiguration()
 builder.Host.UseSerilog(); // Use Serilog for logging
 
 // Add services to the container.
-builder.Services.AddControllersWithViews();
+builder.Services.AddControllersWithViews(options =>
+{
+    options.ModelBinderProviders.Insert(0, new DecimalModelBinderProvider());
+});
+
 builder.Services.AddDbContext<ApplicationDbContext>(options =>
     options.UseInMemoryDatabase("CalculatorDb"));
 builder.Services.AddScoped<CalculatorService>();
