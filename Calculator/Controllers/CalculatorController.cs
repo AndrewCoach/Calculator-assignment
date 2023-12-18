@@ -1,5 +1,6 @@
 ﻿using Calculator.Data;
 using Calculator.Models;
+using Calculator.Services;
 using Microsoft.AspNetCore.Mvc;
 using Serilog;
 
@@ -8,10 +9,12 @@ namespace Calculator.Controllers;
 public class CalculatorController : Controller
 {
     private readonly ApplicationDbContext _context;
+    private readonly CalculatorService _calculatorService;
 
-    public CalculatorController(ApplicationDbContext context)
+    public CalculatorController(ApplicationDbContext context, CalculatorService calculatorService)
     {
         _context = context;
+        _calculatorService = calculatorService;
     }
 
     [HttpGet]
@@ -29,7 +32,7 @@ public class CalculatorController : Controller
     {
         try
         {
-            var result = model.Calculate();
+            var result = _calculatorService.PerformCalculation(model.Operand1, model.Operand2, model.Operation, model.RoundResult);
             var formattedCalculation = $"{model.Operand1} {OperationToSymbol(model.Operation)} {model.Operand2} = {result}";
             var history = new CalculationHistory
             {
@@ -43,14 +46,16 @@ public class CalculatorController : Controller
         }
         catch (Exception ex)
         {
-            SendError(ex);
-            return Json(new { success = false, message = ex.Message });
+            var errorMessage = SendError(ex);
+            return Json(new { success = false, message = errorMessage });
         }
     }
 
-    private void SendError(Exception exception)
+    private string SendError(Exception exception)
     {
-        Log.Error(exception, "An error occurred in the CalculatorController");
+        var errorMessage = $"An error occurred: {exception.Message}";
+        Log.Error(exception, errorMessage);
+        return errorMessage;
     }
 
     private string OperationToSymbol(OperationType operation)

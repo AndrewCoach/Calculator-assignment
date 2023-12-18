@@ -1,4 +1,5 @@
 using Calculator.Data;
+using Calculator.Services;
 using Microsoft.EntityFrameworkCore;
 using Serilog;
 
@@ -16,6 +17,7 @@ builder.Host.UseSerilog(); // Use Serilog for logging
 builder.Services.AddControllersWithViews();
 builder.Services.AddDbContext<ApplicationDbContext>(options =>
     options.UseInMemoryDatabase("CalculatorDb"));
+builder.Services.AddScoped<CalculatorService>();
 
 var app = builder.Build();
 
